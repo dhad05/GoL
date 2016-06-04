@@ -11,9 +11,9 @@ use rand::Rng;
 use std::sync::{Arc, Mutex};
 use gdk::enums::modifier_type;
 
-const WIDTH: i32 = 200;
-const HEIGHT: i32 = 200;
-const CELL_SIZE: i32 = 3;
+const WIDTH: i32 = 150;
+const HEIGHT: i32 = 150;
+const CELL_SIZE: i32 = 4;
 
 type Map = [[u32; HEIGHT as usize]; WIDTH as usize];
 
@@ -142,7 +142,6 @@ fn main() {
                       gdk_sys::GDK_POINTER_MOTION_MASK |
                       gdk_sys::GDK_BUTTON_PRESS_MASK
                       ).bits() as i32);
-let i: i32 = gdk_sys::GDK_POINTER_MOTION_MASK;
     // ask button_box to place widgets from top
     button_box.set_layout(gtk::ButtonBoxStyle::Start);
     button_box.pack_start(&pause_button, false, false, 0);
