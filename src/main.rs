@@ -142,7 +142,7 @@ fn main() {
                       gdk_sys::GDK_POINTER_MOTION_MASK |
                       gdk_sys::GDK_BUTTON_PRESS_MASK
                       ).bits() as i32);
-
+let i: i32 = gdk_sys::GDK_POINTER_MOTION_MASK;
     // ask button_box to place widgets from top
     button_box.set_layout(gtk::ButtonBoxStyle::Start);
     button_box.pack_start(&pause_button, false, false, 0);
