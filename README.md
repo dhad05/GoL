@@ -1,4 +1,7 @@
 # Conway's Game of Life in Rust
+## Preview
+https://www.youtube.com/watch?v=rNOJNjc4vlg
+## Build
 This is my first project with Rust. Build it with:
 ```
 cargo build
