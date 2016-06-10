@@ -29,7 +29,7 @@ extern crate cairo;
 extern crate rand;
 
 use gtk::prelude::*;
-use gtk::{Window, WindowType, DrawingArea, Button};
+use gtk::{Window, WindowType, DrawingArea, Button, ScrolledWindow};
 use std::thread;
 use rand::Rng;
 use std::sync::{Arc, Mutex};
@@ -56,6 +56,9 @@ struct State{
     exited: bool,
     next: bool,
 }
+
+// DrawingArea is wrapped in Area, look here: 
+// http://stackoverflow.com/questions/25413201/how-do-i-implement-a-trait-i-dont-own-for-a-type-i-dont-own-in-rust
 struct Area(DrawingArea);
 
 unsafe impl Send for Area {
@@ -130,7 +133,7 @@ impl MapTrait for Map {
 
 fn main() {
     if gtk::init().is_err() {
-        println!("failed!!");    
+        panic!("gtk::init() failed!!");
     }
     // these variables need to be shared between threads 
     // so wrap it into Arc(Mutex())
@@ -157,7 +160,10 @@ fn main() {
     let zoom_in_button = Button::new_with_label("Zoom in");
     let zoom_out_button = Button::new_with_label("Zoom out");
     let area = Area(DrawingArea::new());
-    area.0.set_size_request(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE);
+    let scroller = ScrolledWindow::new(None, None);
+    scroller.set_size_request(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE);
+    // disable auto-hide scrollbar
+    scroller.set_overlay_scrolling(false);
 
     /* Ask to recieve events the drawing area doesn't normally
      * subscribe to
@@ -174,7 +180,8 @@ fn main() {
     button_box.pack_start(&clear_button, false, false, 0);
     button_box.pack_start(&zoom_in_button, false, false, 0);
     button_box.pack_start(&zoom_out_button, false, false, 0);
-    hbox.pack_start(&area.0, false, false, 0);
+    scroller.add(&area.0);
+    hbox.pack_start(&scroller, false, false, 0);
     hbox.pack_start(&button_box, false, false, 0);
     window.add(&hbox);
     window.set_title("Game of Life");
@@ -185,7 +192,7 @@ fn main() {
         let map = map.clone();
         let state = state.clone();
         let cell_size = cell_size.clone();
-        area.0.connect_draw( move |_, cr| {
+        area.0.connect_draw( move |this, cr| {
             let mut map = map.lock().unwrap();
             {
                 let mut state = state.lock().unwrap();
@@ -196,7 +203,10 @@ fn main() {
                     state.next = false;
                 }
             }
-            (|x: f64| cr.scale(x, x)) (*cell_size.lock().unwrap() as f64);
+            (|x: i32| {
+                this.set_size_request(WIDTH*x, HEIGHT*x);
+                cr.scale(x as f64, x as f64);
+            }) (*cell_size.lock().unwrap());
             cr.set_source_rgb(1f64, 1f64, 1f64);
             cr.paint();
             cr.set_source_rgb(0f64, 0f64, 0f64);
