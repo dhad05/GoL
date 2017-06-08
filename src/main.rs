@@ -1,7 +1,7 @@
 /*
  MIT License
 
- Copyright (c) 2016 dhad05
+ Copyright (c) 2017 dhad05
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 extern crate gtk;
 extern crate gdk;
-extern crate gdk_sys;
 extern crate cairo;
 extern crate rand;
 
@@ -33,7 +32,6 @@ use gtk::{Window, WindowType, DrawingArea, Button, ScrolledWindow};
 use std::thread;
 use rand::Rng;
 use std::sync::{Arc, Mutex};
-use gdk::enums::modifier_type;
 
 const WIDTH: i32 = 150;
 const HEIGHT: i32 = 150;
@@ -169,8 +167,8 @@ fn main() {
      * subscribe to
      * */
     area.0.set_events(area.0.get_events() | (
-                      gdk_sys::GDK_POINTER_MOTION_MASK |
-                      gdk_sys::GDK_BUTTON_PRESS_MASK
+                      gdk::POINTER_MOTION_MASK |
+                      gdk::BUTTON_PRESS_MASK
                       ).bits() as i32);
     // ask button_box to place widgets from top
     button_box.set_layout(gtk::ButtonBoxStyle::Start);
@@ -234,10 +232,10 @@ fn main() {
                 state.lock().unwrap().repaint = true;
             };
             let ev_state = ev.get_state();
-            if (ev_state & modifier_type::Button1Mask).bits() != 0 {
+            if (ev_state & gdk::BUTTON1_MASK).bits() != 0 {
                 // if left mouse is clicked
                 set(1);
-            }else if (ev_state & modifier_type::Button3Mask).bits() != 0 {
+            }else if (ev_state & gdk::BUTTON3_MASK).bits() != 0 {
                 // if right mouse is clicked
                 set(0);
             }
@@ -259,10 +257,10 @@ fn main() {
                 state.lock().unwrap().repaint = true;
             };
             // get button keyval
-            let button = ev.as_ref().button as i32;
-            if button == gdk_sys::GDK_BUTTON_PRIMARY {
+            let button = ev.as_ref().button;
+            if button == gdk::enums::key::Pointer_Button1 {
                 set(1);
-            }else if button == gdk_sys::GDK_BUTTON_SECONDARY {
+            }else if button == gdk::enums::key::Pointer_Button2 {
                 set(0);
             }
             Inhibit(true)

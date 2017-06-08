@@ -4,12 +4,10 @@ version = "0.1.0"
 authors = ["dhad05 <degeawapsh@gmail.com>"]
 
 [dependencies]
-gdk = "0.3.0"
-cairo-rs = "0.0.8"
+gdk = "0.5.3"
+cairo-rs = "0.1.3"
 rand = "0.3"
-glib = "0.0.8"
-gdk-sys = "0.3.0"
 
 [dependencies.gtk]
-version = "0.0.7"
+version = "0.1.3"
 features = ["v3_16"]
